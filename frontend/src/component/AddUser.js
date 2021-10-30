@@ -1,9 +1,9 @@
-import React, {  useState } from "react";
+import React, {  useState, useEffect } from "react";
 import axios from "axios";
-
+import AdminUserSamy from "./AdminUserSamy";
 
 const Adduser = () => {
-
+  const [userData, setUserData] = useState([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -38,6 +38,7 @@ const HandleSubmit = (e) => {
           setErrorpass(false) 
           setResponse(res.data.message)
          console.log(res)
+         window.location.reload();
         })
         .catch((error) => {
           console.log(error.response.data.error);
@@ -46,8 +47,19 @@ const HandleSubmit = (e) => {
         })
       }
   };
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    axios
+      .get("http://localhost:3000/api/user/user")
+      .then((res) => setUserData(res.data.user));
+  };
+
 
   return (
+    <div>
     <div className="formm">
       <h2>Add  user </h2>
           <form onSubmit={(e) => HandleSubmit(e)}>
@@ -82,6 +94,14 @@ const HandleSubmit = (e) => {
           </form>
         <span style={{color: "green"}}>{response}</span>
     </div>
+    <ul>
+    {userData
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((user) => (
+        <AdminUserSamy key={user.id} user={user} />
+      ))}
+  </ul>
+   </div>
   );
 };
 

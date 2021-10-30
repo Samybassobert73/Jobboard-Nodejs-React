@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import Login from './pages/Login';
 
 import admin from './pages/admin'
+import profile from "./pages/profile";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Route path="/Register" exact component={Register}/>
       <Route path="/Login" exact component={Login}/>
       <Route path="/admin" exact component={admin}/>
+      <Route path="/me" exact component={profile}/>
       <Route component={NotFound}/>
     </Switch>
   </BrowserRouter>

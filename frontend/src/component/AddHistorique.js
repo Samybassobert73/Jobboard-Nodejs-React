@@ -1,19 +1,30 @@
-import React, {  useState } from "react";
+import React, {  useState, useEffect } from "react";
 import axios from "axios";
-
+import AdminhistoriqueSamy from "./AdminHistoriqueSamy";
 
 const AddHistorique = () => {
-
+  const [HistoriqueData, setHistoriqueData] = useState([]);
   const [nom_societe, setNom_societe] = useState("");
   const [nom_postulant, setNom_postulant] = useState("");
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState("");
 
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    axios
+      .get("http://localhost:3000/api/apply/historique")
+      .then((res) => setHistoriqueData(res.data.historique));
+  };
+
+
   const HandleSubmit = (e) => {
     e.preventDefault();
 
       axios
-        .post("http://localhost:3000/api/user/historique", {
+        .post("http://localhost:3000/api/apply/historique", {
           nom_societe,
           nom_postulant,
           message
@@ -24,6 +35,7 @@ const AddHistorique = () => {
           setMessage("");
           setResponse(res.data.message)
          console.log(res)
+         window.location.reload();
         })
         .catch((error) => {
           console.log(error.response.data.error);
@@ -31,6 +43,7 @@ const AddHistorique = () => {
       }
 
   return (
+    <div>
     <div className="formm">
       <h2>Add  Historique </h2>
       <form onSubmit={(e) => HandleSubmit(e)}>
@@ -57,6 +70,14 @@ const AddHistorique = () => {
       </form>
       
      <span style={{color: "green"}}>{response}</span>
+     </div>
+     <ul>
+     {HistoriqueData
+       .sort((a, b) => b.createdAt - a.createdAt)
+       .map((historique) => (
+         <AdminhistoriqueSamy key={historique.id} historique={historique} />
+       ))}
+   </ul>
     </div>
   );
 };

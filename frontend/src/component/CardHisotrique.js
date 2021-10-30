@@ -7,7 +7,7 @@ const CardHisotrique = () => {
  useEffect(() => {
 
     axios.get(
-        "http://localhost:3000/api/user/historique"
+        "http://localhost:3000/api/apply/historique"
     )
     .then((res) => {
         console.log(res.data.historique);

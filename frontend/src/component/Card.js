@@ -17,7 +17,8 @@ const Card = (props) => {
     return (
         <div className="annonce"> 
           <div className="headcard">
-            <h2> {announces.intitule} </h2>
+            <h2> {announces.nom_societe} </h2>
+            <h3> {announces.intitule} </h3> 
             <em>Posté le {dateParser(announces.createdAt)}</em>
           </div>  
           <ReadMore announces={announces} />

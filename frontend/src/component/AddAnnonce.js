@@ -1,9 +1,10 @@
-import React, {  useState } from "react";
+import React, {  useState,useEffect } from "react";
 import axios from "axios";
+import AdminAnnonceSamy from "./AdminAnnonceSamy";
 
 
 const AddAnnonce = () => {
-
+  const [AnnonceData, setAnnonceData] = useState([]);
   const [nom_societe, setNom_societe] = useState("");
   const [skill, setSkill] = useState("");
   const [intitule, setIntitule] = useState("");
@@ -14,11 +15,22 @@ const AddAnnonce = () => {
   const [contrat, setContrat] = useState("");
   const [response, setResponse] = useState("");
 
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = () => {
+    axios
+      .get("http://localhost:3000/api/annonce/annonce")
+      .then((res) => setAnnonceData(res.data.announces));
+  };
+
+
   const HandleSubmit = (e) => {
     e.preventDefault();
 
       axios
-        .post("http://localhost:3000/api/user/annonce", {
+        .post("http://localhost:3000/api/annonce/annonce", {
           nom_societe,
           skill,
           intitule,
@@ -39,6 +51,7 @@ const AddAnnonce = () => {
           setContrat("");
           setResponse(res.data.message)
          console.log(res)
+         window.location.reload();
         })
         .catch((error) => {
           console.log(error.response.data.error);
@@ -46,8 +59,9 @@ const AddAnnonce = () => {
       }
 
   return (
+    <div>
     <div className="formm">
-        <h2>Add  user </h2>
+        <h2>Add Annonce </h2>
       <form onSubmit={(e) => HandleSubmit(e)}>
 
       <input
@@ -95,6 +109,17 @@ const AddAnnonce = () => {
       </form>
 
       <span style={{color: "green"}}>{response}</span>
+
+     
+
+    </div>
+     <ul>
+     {AnnonceData
+       .sort((a, b) => b.createdAt - a.createdAt)
+       .map((announces) => (
+         <AdminAnnonceSamy key={announces.id} announces={announces} />
+       ))}
+   </ul>
     </div>
   );
 };

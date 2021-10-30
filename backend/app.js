@@ -3,11 +3,13 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const { Sequelize } = require('sequelize');
 const userroute = require('./routes/user');
+const applyroute = require('./routes/apply');
+const annonceroute = require('./routes/annonce');
 const app = express();
 
 
 //sequelize
-const sequelize = new Sequelize("database_development_job", "samy", "coolman300", {
+const sequelize = new Sequelize("database_development_job", "samy", "root", {
   dialect: "mysql",
   host: "localhost"
 });
@@ -37,5 +39,9 @@ app.get('/api/', function(req, res) {
 });
 
 app.use('/api/user', userroute);
+app.use('/api/apply', applyroute);
+app.use('/api/annonce', annonceroute);
+
+
 
 module.exports = app;

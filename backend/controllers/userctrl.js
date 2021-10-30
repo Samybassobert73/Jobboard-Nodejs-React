@@ -144,13 +144,7 @@ module.exports = {
       userlist:["user1","user2"]
   });
 },
-  annonce: async function(req, res) {
  
-  const announces = await models.Announces.findAll();
-  console.log(announces);
-  return res.status(201).json({announces});
-  
-},
   user: async function(req, res) {
   const user = await models.User.findAll();
   console.log(user);
@@ -160,6 +154,9 @@ module.exports = {
   // Getting auth header
   var headerAuth  = req.headers['authorization'];
   var userId      = jwtUtils.getUserId(headerAuth);
+
+  console.log(headerAuth);
+  console.log(userId);
 
   if (userId < 0)
     return res.status(400).json({ 'error': 'wrong token' });
@@ -177,144 +174,57 @@ module.exports = {
     res.status(500).json({ 'error': 'cannot fetch user' });
   });
 },
-  apply: function(req, res) {
+updateUserProfile: function(req, res) {
+  // Getting auth header
+  var headerAuth  = req.headers['authorization'];
+  var userId      = jwtUtils.getUserId(headerAuth);
 
-    // Params
-    var nom_societe = req.body.Nom_societe ;
-    var nom_postulant  = req.body.Nom_postulant;
-    var message = req.body.Message;
+  // Params
+  var bio = req.body.bio;
 
-    console.log(nom_societe);
-    console.log(nom_postulant);
-    console.log(message);
-    
-    asyncLib.waterfall([
-     
-     
-      function(done) {
-        var newUser = models.Anhistorique.create({
-          nom_societe: nom_societe,
-          nom_postulant: nom_postulant,
-          message: message,
-        })
-        .then(function(newUser) {
-          done(newUser);
-        })
-        .catch(function(err) {
-          return res.status(500).json({ 'error': err });
-        });
-      }
-    ], function(newUser) {
-      if (newUser) {
-        return res.status(201).json({
-          'userId': newUser.id,
-          'message':"vous avez bien postuler" 
+  asyncLib.waterfall([
+    function(done) {
+      models.User.findOne({
+        attributes: ['id', 'bio'],
+        where: { id: userId }
+      }).then(function (userFound) {
+        done(null, userFound);
+      })
+      .catch(function(err) {
+        return res.status(500).json({ 'error': 'unable to verify user' });
+      });
+    },
+    function(userFound, done) {
+      if(userFound) {
+        userFound.update({
+          bio: (bio ? bio : userFound.bio)
+        }).then(function() {
+          done(userFound);
+        }).catch(function(err) {
+          res.status(500).json({ 'error': 'cannot update user' });
         });
       } else {
-        return res.status(500).json({ 'error': 'cannot add user' });
+        res.status(404).json({ 'error': 'user not found' });
       }
-    });
-   },
-   AddAnnonce: function(req, res) {
-
-    // Params
-    var nom_societe = req.body.nom_societe ;
-    var skill  = req.body.skill;
-    var intitule = req.body.intitule;
-    var salaire = req.body.salaire;
-    var description = req.body.description;
-    var lieu = req.body.lieu;
-    var referent = req.body.referent;
-    var contrat = req.body.contrat;
-
-    console.log(nom_societe);
-    console.log(skill);
-    console.log(intitule);
-    console.log(salaire);
-    console.log(description);
-    console.log(lieu);
-    console.log(referent);
-    console.log(contrat);
-
-    asyncLib.waterfall([
-     
-     
-      function(done) {
-        var newAnnonce = models.Announces.create({
-          nom_societe: nom_societe,
-          skill: skill,
-          intitule: intitule,
-          salaire: salaire,
-          description: description,
-          lieu: lieu,
-          referent: referent,
-          contrat: contrat
-        })
-        .then(function(newAnnonce) {
-          done(newAnnonce);
-        })
-        .catch(function(err) {
-          return res.status(500).json({ 'error': err });
-        });
-      }
-    ], function(newAnnonce) {
-      if (newAnnonce) {
-        return res.status(201).json({
-          'message': "new announces create"
-        });
-      } else {
-        return res.status(500).json({ 'error': 'cannot add announce' });
-      }
-    });
+    },
+  ], function(userFound) {
+    if (userFound) {
+      return res.status(201).json(userFound);
+    } else {
+      return res.status(500).json({ 'error': 'cannot update user profile' });
+    }
+  });
 },
-  AddHistorique: function(req, res) {
+deleteUser: async function(req, res) {
 
-    // Params
-    var nom_societe = req.body.nom_societe ;
-    var nom_postulant  = req.body.nom_postulant;
-    var message = req.body.message;
+  var id = req.params.id;
+  console.log(id);
 
-    console.log(nom_societe);
-    console.log(nom_postulant);
-    console.log(message);
-    
-    asyncLib.waterfall([
-     
-     
-      function(done) {
-        var newHistorique = models.Anhistorique.create({
-          nom_societe: nom_societe,
-          nom_postulant: nom_postulant,
-          message: message
-        })
-        .then(function(newHistorique) {
-          done(newHistorique);
-        })
-        .catch(function(err) {
-          return res.status(500).json({ 'error': err });
-        });
-      }
-    ], function(newHistorique) {
-      if (newHistorique) {
-        return res.status(201).json({
-          'message': "new historique create"
-          
-        });
-       
-      
-      } else {
-        return res.status(500).json({ 'error': 'cannot add historique' });
-      }
-    });
-},
-  historique: async function(req, res) {
- 
-    const historique = await models.Anhistorique.findAll();
-    console.log(this.historique);
-    return res.status(201).json({historique});
-    
-  },
+  const User = await models.User;
+  await User.destroy({where: { id: id  }});
   
-   
+  return res.status(201).json({ message:'succes'});
+}
+  
 }
 

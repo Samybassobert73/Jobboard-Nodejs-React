@@ -1,19 +1,41 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import DeleteAnnonce from './DeleteAnnonce';
 
 const Cardannonce = () => {
     const [state, setState] = useState([]);
-   
- useEffect(() => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedContent, setEditContent] = useState("");
+
+
+
+
+useEffect(() => {
 
     axios.get(
-        "http://localhost:3000/api/user/annonce"
+        "http://localhost:3000/api/annonce/annonce"
     )
     .then((res) => {
         console.log(res.data.announces);
         setState(res.data.announces);
     });
  },[]); 
+ 
+    /*const handleEdit = () => {
+        const data = {
+          intitule: announces.intitule,
+          description: editedContent ? editedContent : announces.description,
+          createdAt: announces.createdAt,
+        };
+    }
+    
+        axios.put("http://localhost:3004/articles/" + article.id, data).then(() => {
+      setIsEditing(false);
+    });
+  };
+*/
+
+
 
     return (
         <div>
@@ -32,9 +54,20 @@ const Cardannonce = () => {
                                     <li> Réferent: {announces.referent} </li>
                                 </ul>
                             </div>  
+                            <div className="btn-container">
+                                {isEditing ? (
+                                <button >Valider</button>
+                                ) : (
+                                <button onClick={() => setIsEditing(true)}>Edit</button>
+                                )}
+                                <DeleteAnnonce/>
+                            </div>
+                            
                         </div>
+                        
                     ))}
                 </ul>
+                
             </div>
         </div>
     );

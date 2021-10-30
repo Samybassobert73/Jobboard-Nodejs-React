@@ -36,7 +36,9 @@ const Loggout = () => {
                         <NavLink exact to="/" onClick={Loggout} >
                         Deconnexion
                         </NavLink> 
+                        <NavLink exact to="/me">
                         <span className="username">{localStorage.getItem("username")}</span>
+                        </NavLink> 
                     </div>
                 
                 :""}

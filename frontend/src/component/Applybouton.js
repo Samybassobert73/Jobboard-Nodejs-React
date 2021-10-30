@@ -24,7 +24,7 @@ const Applybouton = (props) => {
     console.log(nom_societe);
     
      axios
-     .post("http://localhost:3000/api/user/apply", {
+     .post("http://localhost:3000/api/apply/apply", {
        Nom_postulant: username,
        Nom_societe: nom_societe,
        Message: "Apply Request"
@@ -39,7 +39,7 @@ const Applybouton = (props) => {
    e.preventDefault();
  
        axios
-       .post("http://localhost:3000/api/user/apply", {
+       .post("http://localhost:3000/api/apply/apply", {
          Nom_societe,
          Nom_postulant,
          Message,

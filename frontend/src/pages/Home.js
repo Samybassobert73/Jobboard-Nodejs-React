@@ -1,7 +1,7 @@
 import React from 'react';
 import Navigation from '../component/Navigation';
 
-import Countries from '../component/Countries';
+import BodyAnnonce from '../component/BodyAnnonce';
 
 const Home = () => {
 
@@ -10,7 +10,7 @@ return (
             <Navigation />
             <section> 
                 <h2>Offre d'emploi</h2>
-                <Countries />
+                <BodyAnnonce />
             </section>
     </div>
 )
